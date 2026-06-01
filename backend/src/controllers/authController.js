@@ -100,7 +100,15 @@ const login = (req, res) => {
   );
 };
 
+const getProfile = (req, res) => {
+  res.status(200).json({
+    message: "Protected Route Accessed",
+    user: req.user
+  });
+};
+
 module.exports = {
     register,
-    login
+    login,
+    getProfile
 };
