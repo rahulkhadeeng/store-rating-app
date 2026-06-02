@@ -33,6 +33,33 @@ const createUser = async (req, res) => {
   }
 };
 
+const createStore = async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      address,
+      owner_id
+    } = req.body;
+
+    await db.promise().query(
+      `INSERT INTO stores
+      (name,email,address,owner_id)
+      VALUES (?,?,?,?)`,
+      [name, email, address, owner_id]
+    );
+
+    res.status(201).json({
+      message: "Store created successfully"
+    });
+
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+
+
 const getDashboard = async (req, res) => {
   try {
     const [users] = await db.promise().query(
@@ -60,4 +87,5 @@ const getDashboard = async (req, res) => {
 module.exports = {
   getDashboard,
   createUser,
+  createStore,
 };
