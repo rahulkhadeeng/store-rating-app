@@ -16,7 +16,7 @@ function AppRoutes() {
       <Route
         path="/admin"
         element={
-          <ProtectedRoute allowedRole="admin">
+          <ProtectedRoute allowedRole="ADMIN">
             <AdminDashboard />
           </ProtectedRoute>
         }
@@ -24,7 +24,7 @@ function AppRoutes() {
       <Route
         path="/user"
         element={
-          <ProtectedRoute allowedRole="user">
+          <ProtectedRoute allowedRole="USER">
             <UserDashboard />
           </ProtectedRoute>
         }
@@ -32,7 +32,7 @@ function AppRoutes() {
       <Route
         path="/owner"
         element={
-          <ProtectedRoute allowedRole="owner">
+          <ProtectedRoute allowedRole="STORE_OWNER">
             <StoreOwnerDashboard />
           </ProtectedRoute>
         }
