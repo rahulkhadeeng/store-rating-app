@@ -25,6 +25,40 @@ function UserDashboard() {
     fetchStores();
   }, []);
 
+  const submitRating = async (storeId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const rating = document.getElementById(
+      `rating-${storeId}`
+    ).value;
+
+    await api.post(
+      "/ratings",
+      {
+        store_id: storeId,
+        rating,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    alert("Rating Submitted");
+
+    fetchStores();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const logout = () => {
+  localStorage.clear();
+  window.location.href = "/";
+};
+
   return (
     <div>
       <h1>User Dashboard</h1>
@@ -35,6 +69,7 @@ function UserDashboard() {
             <th>Email</th>
             <th>Address</th>
             <th>Overall Rating</th>
+            <th>Submit Rating</th>
           </tr>
         </thead>
 
@@ -45,10 +80,12 @@ function UserDashboard() {
               <td>{store.email}</td>
               <td>{store.address}</td>
               <td>{store.overallRating || "No Ratings"}</td>
+              <td><input type="number" min="1" max="5" id={`rating-${store.id}`}/> <button onClick={() => submitRating(store.id)}> Submit </button></td>
             </tr>
           ))}
         </tbody>
       </table>
+      <button onClick={logout}>Logout</button>
     </div>
   );
 }
