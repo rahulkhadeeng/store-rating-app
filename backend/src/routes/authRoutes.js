@@ -5,7 +5,8 @@ const verifyToken = require("../middleware/authMiddleware");
 const {
     register,
     login,
-    getProfile
+    getProfile,
+    changePassword,
 } = require("../controllers/authController");
 
 router.post("/register", register);
