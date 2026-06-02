@@ -107,8 +107,55 @@ const getProfile = (req, res) => {
   });
 };
 
+const changePassword = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const {
+      currentPassword,
+      newPassword
+    } = req.body;
+
+    const [users] = await db.promise().query(
+      "SELECT * FROM users WHERE id = ?",
+      [userId]
+    );
+
+    const user = users[0];
+
+    const isMatch = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
+
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Current password is incorrect"
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(
+      newPassword,
+      10
+    );
+
+    await db.promise().query(
+      "UPDATE users SET password=? WHERE id=?",
+      [hashedPassword, userId]
+    );
+
+    res.status(200).json({
+      message: "Password updated successfully"
+    });
+
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 module.exports = {
     register,
     login,
-    getProfile
+    getProfile,
+    changePassword,
 };
