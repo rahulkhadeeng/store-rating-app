@@ -5,6 +5,7 @@ const adminRoutes = require("./src/routes/adminRoutes");
 const authRoutes = require("./src/routes/authRoutes");
 const express = require("express");
 const cors = require("cors");
+const userRoutes = require("./src/routes/userRoutes");
 
 const app = express();
 
@@ -14,6 +15,8 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 
 app.use("/api/admin", adminRoutes);
+
+app.use("/api", userRoutes);
 
 app.get("/", (req, res) => {
   res.send("API Running");
