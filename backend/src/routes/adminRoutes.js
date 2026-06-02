@@ -6,7 +6,16 @@ const authorizeRoles = require("../middleware/roleMiddleware");
 
 const {
   getDashboard,
+  createUser,
 } = require("../controllers/adminController");
+
+
+router.post(
+  "/users",
+  verifyToken,
+  authorizeRoles("ADMIN"),
+  createUser
+);
 
 router.get(
   "/dashboard",
