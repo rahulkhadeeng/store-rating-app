@@ -8,6 +8,7 @@ const {
   getDashboard,
   createUser,
   createStore,
+  getStores,
 } = require("../controllers/adminController");
 
 
@@ -33,6 +34,13 @@ router.get(
   
   getDashboard
 
+);
+
+router.get(
+  "/stores",
+  verifyToken,
+  authorizeRoles("ADMIN"),
+  getStores
 );
 
 module.exports = router;

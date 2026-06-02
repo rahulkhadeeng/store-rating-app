@@ -84,8 +84,31 @@ const getDashboard = async (req, res) => {
   }
 };
 
+const getStores = async (req, res) => {
+  try {
+    const [stores] = await db.promise().query(`
+      SELECT
+        s.id,
+        s.name,
+        s.email,
+        s.address,
+        ROUND(AVG(r.rating), 2) AS rating
+      FROM stores s
+      LEFT JOIN ratings r
+      ON s.id = r.store_id
+      GROUP BY s.id
+    `);
+
+    res.status(200).json(stores);
+
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 module.exports = {
   getDashboard,
   createUser,
   createStore,
+  getStores,
 };
