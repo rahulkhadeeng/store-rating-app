@@ -106,9 +106,29 @@ const getStores = async (req, res) => {
   }
 };
 
+const getUsers = async (req, res) => {
+  try {
+    const [users] = await db.promise().query(`
+      SELECT
+        id,
+        name,
+        email,
+        address,
+        role
+      FROM users
+    `);
+
+    res.status(200).json(users);
+
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 module.exports = {
   getDashboard,
   createUser,
   createStore,
   getStores,
+  getUsers,
 };
