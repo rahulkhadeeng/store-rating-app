@@ -6,6 +6,7 @@ const authRoutes = require("./src/routes/authRoutes");
 const express = require("express");
 const cors = require("cors");
 const userRoutes = require("./src/routes/userRoutes");
+const storeOwnerRoutes = require("./src/routes/storeOwnerRoutes");
 
 const app = express();
 
@@ -25,3 +26,5 @@ app.get("/", (req, res) => {
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);
 });
+
+app.use("/api/owner", storeOwnerRoutes);
