@@ -123,6 +123,20 @@ const getDashboard = async (req, res) => {
 
 const getStores = async (req, res) => {
   try {
+    const {
+      name = "",
+      address = "",
+      sortBy = "name",
+      order = "ASC",
+    } = req.query;
+
+    const allowedSortFields = ["name", "email", "address", "rating"];
+    const allowedOrder = ["ASC", "DESC"];
+    const safeSortBy = allowedSortFields.includes(sortBy) ? sortBy : "name";
+    const safeOrder = allowedOrder.includes(order.toUpperCase())
+      ? order.toUpperCase()
+      : "ASC";
+
     const [stores] = await db.promise().query(`
       SELECT
         s.id,
@@ -133,8 +147,11 @@ const getStores = async (req, res) => {
       FROM stores s
       LEFT JOIN ratings r
       ON s.id = r.store_id
+      WHERE s.name LIKE ?
+      AND s.address LIKE ?
       GROUP BY s.id
-    `);
+      ORDER BY ${safeSortBy} ${safeOrder}
+    `, [`%${name}%`, `%${address}%`]);
 
     res.status(200).json(stores);
 
@@ -145,6 +162,21 @@ const getStores = async (req, res) => {
 
 const getUsers = async (req, res) => {
   try {
+    const {
+      name = "",
+      email = "",
+      address = "",
+      role = "",
+      sortBy = "name",
+      order = "ASC",
+    } = req.query;
+
+    const allowedSortFields = ["name", "email", "address", "role"];
+    const allowedOrder = ["ASC", "DESC"];
+    const safeSortBy = allowedSortFields.includes(sortBy) ? sortBy : "name";
+
+    const safeOrder = allowedOrder.includes(order.toUpperCase()) ? order.toUpperCase() : "ASC";
+
     const [users] = await db.promise().query(`
       SELECT
         id,
@@ -153,7 +185,12 @@ const getUsers = async (req, res) => {
         address,
         role
       FROM users
-    `);
+      WHERE name LIKE ?
+      AND email LIKE ?
+      AND address LIKE ?
+      AND role LIKE ?
+      ORDER BY ${safeSortBy} ${safeOrder}
+    `, [`%${name}%`, `%${email}%`, `%${address}%`, `%${role}%`]);
 
     res.status(200).json(users);
 
