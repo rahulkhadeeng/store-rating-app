@@ -162,10 +162,39 @@ const getUsers = async (req, res) => {
   }
 };
 
+const getUserById = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const [users] = await db.promise().query(`
+      SELECT
+        id,
+        name,
+        email,
+        address,
+        role
+      FROM users
+      WHERE id = ?
+    `, [userId]);
+
+    if (users.length === 0) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json(users[0]);
+
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 module.exports = {
   getDashboard,
   createUser,
   createStore,
+  getUserById,
   getStores,
   getUsers,
 };
