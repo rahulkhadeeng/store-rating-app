@@ -6,9 +6,11 @@ const register = async (req, res) => {
   try {
     const { name, email, password, address } = req.body;
 
-    if (!name || !email || !password || !address) {
+    const validationError = validateUserInput({ name, email, password, address });
+
+    if (validationError) {
       return res.status(400).json({
-        message: "All fields are required",
+        message: validationError,
       });
     }
 
@@ -116,6 +118,20 @@ const changePassword = async (req, res) => {
       newPassword
     } = req.body;
 
+    if (!currentPassword || !newPassword) {
+  return res.status(400).json({
+    message: "Current password and new password are required",
+  });
+}
+
+const validationError = validatePasswordOnly(newPassword);
+
+if (validationError) {
+  return res.status(400).json({
+    message: validationError,
+  });
+}
+
     const [users] = await db.promise().query(
       "SELECT * FROM users WHERE id = ?",
       [userId]
@@ -152,6 +168,11 @@ const changePassword = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
+const {
+  validateUserInput,
+  validatePasswordOnly,
+} = require("../utils/validators");
 
 module.exports = {
     register,

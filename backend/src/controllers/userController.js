@@ -1,5 +1,9 @@
 const db = require("../config/db");
 
+const {
+    validateRating,
+  } = require("../utils/validators");
+
 const getAllStores = async (req, res) => {
   try {
     const [stores] = await db.promise().query(`
@@ -31,6 +35,20 @@ const submitRating = async (req, res) => {
       rating
     } = req.body;
 
+    if (!store_id) {
+      return res.status(400).json({
+        message: "Store is required",
+      });
+    }
+
+    const validationError = validateRating(rating);
+
+    if (validationError) {
+      return res.status(400).json({
+        message: validationError,
+      });
+    }
+
     await db.promise().query(
       `
       INSERT INTO ratings
@@ -54,6 +72,14 @@ const updateRating = async (req, res) => {
     const ratingId = req.params.id;
 
     const { rating } = req.body;
+
+    const validationError = validateRating(rating);
+
+    if (validationError) {
+      return res.status(400).json({
+        message: validationError,
+      });
+    }
 
     await db.promise().query(
       `

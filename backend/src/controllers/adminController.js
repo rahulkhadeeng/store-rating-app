@@ -5,6 +5,25 @@ const createUser = async (req, res) => {
   try {
     const { name, email, password, address, role } = req.body;
 
+    const {
+      validateUserInput,
+      validateStoreInput,
+    } = require("../utils/validators");
+
+    const validationError = validateUserInput({ name, email, password, address });
+
+    if (validationError) {
+      return res.status(400).json({
+        message: validationError,
+      });
+    }
+
+    if (!["ADMIN", "USER", "STORE_OWNER"].includes(role)) {
+      return res.status(400).json({
+        message: "Invalid role",
+      });
+    }
+
     const [existing] = await db.promise().query(
       "SELECT * FROM users WHERE email = ?",
       [email]
@@ -41,6 +60,24 @@ const createStore = async (req, res) => {
       address,
       owner_id
     } = req.body;
+
+    const validationError = validateStoreInput({
+        name,
+        email,
+        address,
+      });
+
+      if (validationError) {
+        return res.status(400).json({
+          message: validationError,
+        });
+      }
+
+      if (!owner_id) {
+        return res.status(400).json({
+          message: "Store owner is required",
+        });
+      }
 
     await db.promise().query(
       `INSERT INTO stores
