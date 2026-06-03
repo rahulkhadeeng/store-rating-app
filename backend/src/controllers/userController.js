@@ -39,7 +39,7 @@ const getAllStores = async (req, res) => {
         res.status(500).json(error);
       }
     };
-    
+
 const submitRating = async (req, res) => {
   try {
     const user_id = req.user.id;
@@ -63,6 +63,17 @@ const submitRating = async (req, res) => {
       });
     }
 
+    const [existing] = await db.promise().query(
+      "SELECT id FROM ratings WHERE user_id = ? AND store_id = ?",
+      [user_id, store_id]
+    );
+
+    if (existing.length > 0) {
+      return res.status(400).json({
+        message: "You have already rated this store. Please update your rating.",
+      });
+    }
+
     await db.promise().query(
       `
       INSERT INTO ratings
@@ -83,6 +94,7 @@ const submitRating = async (req, res) => {
 
 const updateRating = async (req, res) => {
   try {
+    const userId = req.user.id;
     const ratingId = req.params.id;
 
     const { rating } = req.body;
@@ -95,14 +107,21 @@ const updateRating = async (req, res) => {
       });
     }
 
-    await db.promise().query(
+    const [result] = await db.promise().query(
       `
       UPDATE ratings
       SET rating = ?
       WHERE id = ?
+      AND user_id = ?
       `,
-      [rating, ratingId]
+      [rating, ratingId, userId]
     );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: "Rating not found",
+      });
+    }
 
     res.status(200).json({
       message: "Rating updated successfully"
