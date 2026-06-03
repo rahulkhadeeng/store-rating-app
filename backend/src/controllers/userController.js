@@ -5,27 +5,41 @@ const {
   } = require("../utils/validators");
 
 const getAllStores = async (req, res) => {
-  try {
-    const [stores] = await db.promise().query(`
-      SELECT
-        s.id,
-        s.name,
-        s.email,
-        s.address,
-        ROUND(AVG(r.rating),2) AS overallRating
-      FROM stores s
-      LEFT JOIN ratings r
-      ON s.id = r.store_id
-      GROUP BY s.id
-    `);
+    try {
+        const userId = req.user.id;
 
-    res.status(200).json(stores);
+        const {
+          name = "",
+          address = "",
+        } = req.query;
 
-  } catch (error) {
-    res.status(500).json(error);
-  }
-};
+        const [stores] = await db.promise().query(`
+          SELECT
+            s.id,
+            s.name,
+            s.email,
+            s.address,
+            ROUND(AVG(r.rating),2) AS overallRating,
+            ur.id AS userRatingId,
+            ur.rating AS userRating
+          FROM stores s
+          LEFT JOIN ratings r
+          ON s.id = r.store_id
+          LEFT JOIN ratings ur
+          ON s.id = ur.store_id
+          AND ur.user_id = ?
+          WHERE s.name LIKE ?
+          AND s.address LIKE ?
+          GROUP BY s.id, ur.id, ur.rating
+        `, [userId, `%${name}%`, `%${address}%`]);
 
+        res.status(200).json(stores);
+
+      } catch (error) {
+        res.status(500).json(error);
+      }
+    };
+    
 const submitRating = async (req, res) => {
   try {
     const user_id = req.user.id;
