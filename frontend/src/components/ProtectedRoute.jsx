@@ -11,7 +11,7 @@ function ProtectedRoute({
     return <Navigate to="/" />;
   }
 
-  if (role !== allowedRole) {
+  if (allowedRole && role !== allowedRole) {
     return <Navigate to="/" />;
   }
 

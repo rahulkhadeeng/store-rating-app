@@ -5,6 +5,7 @@ import Signup from "../pages/Signup";
 import AdminDashboard from "../pages/AdminDashboard";
 import UserDashboard from "../pages/UserDashboard";
 import StoreOwnerDashboard from "../pages/StoreOwnerDashboard";
+import ChangePassword from "../pages/ChangePassword";
 
 import ProtectedRoute from "../components/ProtectedRoute";
     
@@ -37,7 +38,16 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/change-password"
+        element={
+          <ProtectedRoute>
+            <ChangePassword />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
+    
   );
 }
 
