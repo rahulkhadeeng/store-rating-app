@@ -1,14 +1,14 @@
 const db = require("../config/db");
 const bcrypt = require("bcryptjs");
 
-const createUser = async (req, res) => {
-  try {
-    const { name, email, password, address, role } = req.body;
-
-    const {
+const {
       validateUserInput,
       validateStoreInput,
     } = require("../utils/validators");
+
+const createUser = async (req, res) => {
+  try {
+    const { name, email, password, address, role } = req.body;
 
     const validationError = validateUserInput({ name, email, password, address });
 

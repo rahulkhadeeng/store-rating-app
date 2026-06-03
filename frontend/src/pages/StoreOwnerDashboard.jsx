@@ -59,6 +59,10 @@ function StoreOwnerDashboard() {
         Logout
       </button>
 
+      <button onClick={() => window.location.href = "/change-password"}>
+        Change Password
+      </button>
+
       <hr />
 
       <h2>Store Statistics</h2>
